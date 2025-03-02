@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  position: relative;
+}
+
+/* Fix for Leaflet default marker icon */
+.leaflet-default-icon-path {
+  background-image: url(https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png);
+}
+
+/* Ensure controls are above map and handle pointer events correctly */
+.leaflet-control-container .leaflet-control {
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+/* Make sure the map container handles pointer events properly */
+.leaflet-container {
+  pointer-events: all;
+}
+
+/* Custom overlay controls should block map events */
+#controls-box,
+.layer-options-popup {
+  pointer-events: auto !important;
+}
+
+/* Map pane should be below controls */
+.leaflet-pane {
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Ensure popups are above controls */
+.leaflet-popup {
+  z-index: 1004;
+}

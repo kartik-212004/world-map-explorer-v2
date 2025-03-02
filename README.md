@@ -1,97 +1,36 @@
-# World-Map-Explorer
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-World-Map-Explorer is an intuitive, accessible, and user-friendly tool designed to explore and learn about the 
- map inclusively. This project is developed by Zendalona. The goal of the project is to ensure that everyone can access the world map in a playful and educational manner.
+## Getting Started
 
-# Table of Contents
+First, run the development server:
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Introduction
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-World-Map-Explorer is an inclusive and educational mapping tool designed for individuals with visual impairments as well as sighted users. The purpose is to detail the requirements for creating an accessible, user-friendly application that serves educational purposes and enhances the mapping experience for all users.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Features
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **Capturing User Location:** Automatically center the map on your location using your IP address for a personalized experience.
+## Learn More
 
-- **Keyboard-Assisted Navigation:** Navigate the map effortlessly using arrow keys to move the cursor in any direction.
+To learn more about Next.js, take a look at the following resources:
 
-- **Navigation Using Search:** Discover any location with ease using the search feature to explore countries, states, rivers, and historical monuments.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- **Boundary Setting for Search and navigation:** Select a place to learn more about it, enhancing your exploration experience.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-- **Adjustable Pointer:** Customize the distance and angle of a pointer to explore nearby locations with precision.
+## Deploy on Vercel
 
-- **Real-Time Voice Over:** Receive real-time coordinates of your current location for an interactive experience.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Reset to User Location:** Quickly reset the cursor position to your starting location with a single click..
-
-- **Distance to Borders:** Instantly know the distance to borders in the north, south, east, and west at district, state, or country levels.
-
-- **Real-Time Voice Over:** Receive real-time coordinates of your current location for an interactive experience.
-
-- **Zoom Capabilities with Voice:** Zoom in and out with voice assist, making navigation more accessible..
-
-- **Border Crossing Alert:** Get real-time alerts when crossing borders, adding an interactive element to your journey..
-
-- **Distance Finder:** Find the shortest distance between any two places with ease.
-
-- **Map Layout Options:** Switch between political and geographical views to please your viewing experience.
-
-
----
-
-## Installation
-
-Follow these steps to install and set up the project on your local machine.
-
-### Prerequisites
-
-Ensure you have the following installed:
-- **Git:** For cloning the repository.
-- **Node.js:** For running the server.
-- **Web Browser:** To view the application.
-
-### Clone the Repository
-
-1. Open your terminal or command prompt.
-2. Run the following command to clone the repository:
-
-    ```bash
-    git clone https://github.com/zendalona/WorldMapExplorer.git
-    ```
-
-3. Navigate into the project directory:
-
-    ```bash
-    cd WorldMapExplorer
-    ```
-
----
-
-## Usage
-
-After that, follow these steps to run the application.
-
-### Start the Server
-
-1. Start the server with the following command:
-
-    ```bash
-    node server.js
-    ```
-
-2. Once the server is running, the application will be accessible at:
-
-    ```
-    http://localhost:3000
-    ```
-
-3. Open this URL in your web browser to view and interact with the application.
-
-
-You’re done! You can see the [detailed user manual](https://map.zendalona.com/src/pages/user-guide/index.html) for more information.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
