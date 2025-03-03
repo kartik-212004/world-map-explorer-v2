@@ -11,6 +11,7 @@ import {
 import L from "leaflet";
 import { useMap as useMapContext } from "@/app/context/MapContext";
 import "@/app/utils/polyline";
+import { toast } from "sonner";
 
 interface DistanceFinderProps {
   map: L.Map | null;
@@ -30,6 +31,22 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
   const { updateMapStatus } = useMapContext();
   const startMarker = useRef<L.Marker | null>(null);
   const endMarker = useRef<L.Marker | null>(null);
+
+  const showNotification = (title: string, description?: string, type: "default" | "success" | "error" = "default") => {
+    if (type === "error") {
+      toast.error(title, {
+        description: description,
+      });
+    } else if (type === "success") {
+      toast.success(title, {
+        description: description,
+      });
+    } else {
+      toast(title, {
+        description: description,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!map) return;
@@ -57,34 +74,32 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
 
       setEndPoint(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
       setIsMapClickEnabled(false);
-      updateMapStatus("Destination point selected");
+      showNotification("Destination Selected", "Click Find Distance to calculate the route", "success");
     };
 
     if (isMapClickEnabled) {
       map.on('click', handleMapClick);
-      updateMapStatus("Click on map to select destination point");
+      showNotification("Map Click Enabled", "Click anywhere on the map to select destination");
     }
 
     return () => {
       map.off('click', handleMapClick);
     };
-  }, [map, isMapClickEnabled, updateMapStatus]);
+  }, [map, isMapClickEnabled]);
 
   const enableMapClick = () => {
     if (!startMarker.current) {
-      updateMapStatus("Please select a starting point first");
+      showNotification("Error", "Please select a starting point first", "error");
       return;
     }
     setIsMapClickEnabled(true);
-    updateMapStatus("Click on map to select destination point");
+    showNotification("Select Destination", "Click anywhere on the map to select destination");
   };
 
   const searchLocation = async (query: string, isStart: boolean) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
-        )}&limit=5`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
         {
           headers: {
             "User-Agent": "World-Map-Explorer/1.0",
@@ -99,7 +114,7 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       }
     } catch (error) {
       console.error("Error searching:", error);
-      updateMapStatus("Error searching location");
+      showNotification("Error", "Failed to search location", "error");
     }
   };
 
@@ -159,7 +174,7 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
     const endLatLng = endMarker.current.getLatLng();
 
     try {
-      updateMapStatus("Calculating route...");
+      showNotification("Calculating Route", "Please wait while we calculate the route...");
 
       const response = await fetch(
         `https://router.project-osrm.org/route/v1/driving/${startLatLng.lng},${startLatLng.lat};${endLatLng.lng},${endLatLng.lat}?overview=full&geometries=geojson`
@@ -201,13 +216,17 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
           maxZoom: 10,
         });
 
-        updateMapStatus(`Route found: ${distanceInKm} km`);
+        showNotification(
+          "Route Found", 
+          `Distance: ${distanceInKm}km, Time: ${timeInHours}h ${timeInMinutes}m`,
+          "success"
+        );
       } else {
-        updateMapStatus("Could not find a route between these points");
+        showNotification("Error", "Could not find a route between these points", "error");
       }
     } catch (error) {
       console.error("Error calculating route:", error);
-      updateMapStatus("Error calculating route");
+      showNotification("Error", "Failed to calculate route", "error");
     }
   };
 
