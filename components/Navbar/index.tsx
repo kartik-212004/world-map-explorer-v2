@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import DistanceFinder from "../DistanceFinder";
 
 interface NavbarProps {
   onMapTypeChange: (type: "default" | "geopolitical") => void;

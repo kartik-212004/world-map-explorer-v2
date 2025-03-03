@@ -47,3 +47,121 @@ body {
 .leaflet-popup {
   z-index: 1004;
 }
+
+/* Distance Finder Styles */
+.dist-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 2px solid black;
+  border-radius: 8px;
+  background-color: white;
+  margin-left: 20px;
+  width: 250px;
+}
+
+.dist-input input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.dist-input button {
+  padding: 8px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.box {
+  display: none;
+  position: fixed;
+  top: 120px;
+  left: 10px;
+  z-index: 1003;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  border: 2px solid black;
+  min-width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.box.active {
+  display: block;
+}
+
+.box h1 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.box-input {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.box-input span {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+#fromMap {
+  float: left;
+  padding: 10px;
+  cursor: pointer;
+  color: #666;
+}
+
+#find {
+  float: right;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #6F0E0E;
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+#find:hover {
+  background-color: #8B1111;
+}
+
+#distanceResult {
+  clear: both;
+  margin-top: 60px;
+  background-color: #6F0E0E;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.box #search-results {
+  position: absolute;
+  left: 20px;
+  right: 0;
+  top: 100%;
+  margin-top: 5px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1004;
+}
+
+.box #search-results li {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.box #search-results li:hover {
+  background-color: #f0f0f0;
+}

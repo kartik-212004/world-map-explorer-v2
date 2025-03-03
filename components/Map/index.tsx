@@ -10,6 +10,7 @@ import {
   faMinus,
   faLayerGroup,
   faLocationArrow,
+  faDirections,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   tileLayerGeographical,
@@ -20,6 +21,7 @@ import {
 import { useMap as useMapContext } from "@/app/context/MapContext";
 import CustomMarker from "../Marker";
 import { closeSound } from "@/app/utils/sounds";
+import DistanceFinder from "../DistanceFinder";
 
 // Initialize Leaflet default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -712,6 +714,7 @@ const Map = ({ mapType }: MapProps) => {
   const [zoom] = useState(5);
   const [mapRef, setMapRef] = useState<L.Map | null>(null);
   const { updateMapStatus } = useMapContext();
+  const [showDistanceFinder, setShowDistanceFinder] = useState(false);
 
   useEffect(() => {
     if (mapType === "geopolitical") {
@@ -825,9 +828,26 @@ const Map = ({ mapType }: MapProps) => {
 
   return (
     <div className="relative h-screen w-full">
-      <div className="absolute top-4 left-4 z-[1000]">
-        <Search onSearch={handleSearch} />
+      <div className="absolute top-4 left-4 z-[1000] flex items-center gap-2">
+        <div className="flex items-center">
+          <Search onSearch={handleSearch} />
+          <button
+            className="bg-white p-2 rounded-lg border-2 border-black ml-2"
+            onClick={() => setShowDistanceFinder(true)}
+            aria-label="Find distance between places"
+            title="Find distance between places"
+          >
+            <FontAwesomeIcon icon={faDirections} />
+          </button>
+        </div>
       </div>
+
+      {showDistanceFinder && (
+        <DistanceFinder 
+          map={mapRef} 
+          onClose={() => setShowDistanceFinder(false)} 
+        />
+      )}
 
       <MapContainer
         center={[center.lat, center.lng]}
@@ -841,14 +861,14 @@ const Map = ({ mapType }: MapProps) => {
           <GeoJSON 
             data={indiaBoundary} 
             style={boundaryStyle}
-            interactive={false} // Disable interactions
+            interactive={false}
           />
         )}
         {mapType === "geopolitical" && kashmir && (
           <GeoJSON 
             data={kashmir} 
             style={kashmirStyle}
-            interactive={false} // Disable interactions
+            interactive={false}
           />
         )}
       </MapContainer>
