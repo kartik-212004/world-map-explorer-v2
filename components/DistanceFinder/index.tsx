@@ -1,3 +1,19 @@
+/**
+ * Distance Finder Component
+ * Implemented by Kartik Bhatt (2025)
+ *
+ * This component adds distance calculation functionality to the World Map Explorer.
+ * Features:
+ * - Search locations by name
+ * - Select points directly on map
+ * - Calculate driving distance and time
+ * - Visualize route between points
+ * - Real-time status notifications
+ *
+ * Part of the World Map Explorer project
+ * 
+ **/
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -32,7 +48,11 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
   const startMarker = useRef<L.Marker | null>(null);
   const endMarker = useRef<L.Marker | null>(null);
 
-  const showNotification = (title: string, description?: string, type: "default" | "success" | "error" = "default") => {
+  const showNotification = (
+    title: string,
+    description?: string,
+    type: "default" | "success" | "error" = "default"
+  ) => {
     if (type === "error") {
       toast.error(title, {
         description: description,
@@ -55,16 +75,19 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       if (!isMapClickEnabled || !startMarker.current) return;
 
       const { lat, lng } = e.latlng;
-      
+
       if (endMarker.current) {
         endMarker.current.remove();
       }
 
       endMarker.current = L.marker([lat, lng], {
         icon: L.icon({
-          iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-          iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-          shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          iconUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          iconRetinaUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+          shadowUrl:
+            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],
@@ -74,32 +97,48 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
 
       setEndPoint(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
       setIsMapClickEnabled(false);
-      showNotification("Destination Selected", "Click Find Distance to calculate the route", "success");
+      showNotification(
+        "Destination Selected",
+        "Click Find Distance to calculate the route",
+        "success"
+      );
     };
 
     if (isMapClickEnabled) {
-      map.on('click', handleMapClick);
-      showNotification("Map Click Enabled", "Click anywhere on the map to select destination");
+      map.on("click", handleMapClick);
+      showNotification(
+        "Map Click Enabled",
+        "Click anywhere on the map to select destination"
+      );
     }
 
     return () => {
-      map.off('click', handleMapClick);
+      map.off("click", handleMapClick);
     };
   }, [map, isMapClickEnabled]);
 
   const enableMapClick = () => {
     if (!startMarker.current) {
-      showNotification("Error", "Please select a starting point first", "error");
+      showNotification(
+        "Error",
+        "Please select a starting point first",
+        "error"
+      );
       return;
     }
     setIsMapClickEnabled(true);
-    showNotification("Select Destination", "Click anywhere on the map to select destination");
+    showNotification(
+      "Select Destination",
+      "Click anywhere on the map to select destination"
+    );
   };
 
   const searchLocation = async (query: string, isStart: boolean) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}&limit=5`,
         {
           headers: {
             "User-Agent": "World-Map-Explorer/1.0",
@@ -174,7 +213,10 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
     const endLatLng = endMarker.current.getLatLng();
 
     try {
-      showNotification("Calculating Route", "Please wait while we calculate the route...");
+      showNotification(
+        "Calculating Route",
+        "Please wait while we calculate the route..."
+      );
 
       const response = await fetch(
         `https://router.project-osrm.org/route/v1/driving/${startLatLng.lng},${startLatLng.lat};${endLatLng.lng},${endLatLng.lat}?overview=full&geometries=geojson`
@@ -217,12 +259,16 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
         });
 
         showNotification(
-          "Route Found", 
+          "Route Found",
           `Distance: ${distanceInKm}km, Time: ${timeInHours}h ${timeInMinutes}m`,
           "success"
         );
       } else {
-        showNotification("Error", "Could not find a route between these points", "error");
+        showNotification(
+          "Error",
+          "Could not find a route between these points",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error calculating route:", error);
@@ -342,14 +388,19 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       </div>
 
       <button
-        className={`fas fa-map-marked-alt ${isMapClickEnabled ? 'text-blue-500' : ''}`}
+        className={`fas fa-map-marked-alt ${
+          isMapClickEnabled ? "text-blue-500" : ""
+        }`}
         aria-hidden="true"
         title="Choose from map"
         id="fromMap"
         tabIndex={-1}
         onClick={enableMapClick}
       >
-        <FontAwesomeIcon icon={faMapMarkedAlt} className={isMapClickEnabled ? 'text-blue-500' : 'text-black'} />
+        <FontAwesomeIcon
+          icon={faMapMarkedAlt}
+          className={isMapClickEnabled ? "text-blue-500" : "text-black"}
+        />
       </button>
 
       <button

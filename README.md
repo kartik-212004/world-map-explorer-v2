@@ -1,7 +1,51 @@
-# World-Map-Explorer
+# World Map Explorer
 
-World-Map-Explorer is an intuitive, accessible, and user-friendly tool designed to explore and learn about the 
- map inclusively. This project is developed by Zendalona. The goal of the project is to ensure that everyone can access the world map in a playful and educational manner.
+An interactive world map application with advanced features for exploring and measuring distances.
+
+## Enhanced Version
+
+This repository is an enhanced version of the original World Map Explorer project, with additional features implemented by Kartik Bhatt (2024).
+
+### New Features Added
+
+- **Distance Calculator**: Calculate driving distance and time between any two points
+- **Interactive Point Selection**: Click directly on the map to select destination points
+- **Route Visualization**: View the driving route between selected points
+- **Modern Toast Notifications**: Real-time feedback using Sonner notifications
+- **Improved Search**: Enhanced location search with detailed results
+
+## Original Project
+
+This is a fork of [Original Project Name/URL]. The original project provided the foundation and core mapping functionality.
+
+## Technologies Used
+
+- Next.js
+- React
+- Leaflet
+- OpenStreetMap
+- OSRM (Open Source Routing Machine)
+- Sonner (Toast Notifications)
+- TypeScript
+- Tailwind CSS
+
+## Contributors
+
+- Enhanced Features: Kartik Bhatt (2025)
+
+## License
+
+This project maintains the original license terms. All new features and modifications are provided under the same license.
+
+## Acknowledgments
+
+- Thanks to the original project team for creating the foundation
+- OpenStreetMap for map data
+- OSRM for routing services
+- Leaflet for mapping library
+
+---
+*Note: This is an enhanced version of the original project. For the original version, please visit [Original Project URL].*
 
 # Table of Contents
 
@@ -99,4 +143,4 @@ After that, follow these steps to run the application.
 3. Open this URL in your web browser to view and interact with the application.
 
 
-You’re done! You can see the [detailed user manual](https://map.zendalona.com/src/pages/user-guide/index.html) for more information.
+You're done! You can see the [detailed user manual](https://map.zendalona.com/src/pages/user-guide/index.html) for more information.
