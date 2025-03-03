@@ -282,7 +282,7 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       </button>
 
       <button
-        className="fas  fa-arrow-circle-right"
+        className="fas flex flex-row justify-between items-centerfa-arrow-circle-right"
         tabIndex={0}
         style={{ backgroundColor: "white", padding: "10px" }}
         id="find"

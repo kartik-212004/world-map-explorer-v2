@@ -111,7 +111,7 @@ const Search = ({ onSearch, map }: SearchProps) => {
                 type="submit"
                 id="searchbutton"
                 aria-label="click to search"
-                className="absolute right-0 top-0 bottom-0 w-[30px] opacity-50 cursor-pointer"
+                className="absolute right-0  top-0 bottom-0 w-[30px] opacity-50 cursor-pointer"
                 tabIndex={0}
               >
                 <FontAwesomeIcon icon={faSearch} />
