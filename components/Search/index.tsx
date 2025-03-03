@@ -1,17 +1,24 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSearch,
+  faDirections,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
+import DistanceFinder from "../DistanceFinder";
 
 interface SearchProps {
-  onSearch: (query: string) => void
+  onSearch: (query: string) => void;
+  map: L.Map | null;
 }
 
-const Search = ({ onSearch }: SearchProps) => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<any[]>([])
-  const [showDetails, setShowDetails] = useState(false)
+const Search = ({ onSearch, map }: SearchProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showDistanceFinder, setShowDistanceFinder] = useState(false);
   const [details, setDetails] = useState<{
     displayName: string;
     type?: string;
@@ -21,65 +28,74 @@ const Search = ({ onSearch }: SearchProps) => {
     population?: string;
     borders?: string[];
     languages?: string[];
-  } | null>(null)
+  } | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          searchQuery
+        )}&limit=5`,
         {
           headers: {
-            'User-Agent': 'World-Map-Explorer/1.0'
-          }
+            "User-Agent": "World-Map-Explorer/1.0",
+          },
         }
-      )
-      const data = await response.json()
-      setSearchResults(data)
+      );
+      const data = await response.json();
+      setSearchResults(data);
     } catch (error) {
-      console.error('Error searching:', error)
+      console.error("Error searching:", error);
     }
-  }
+  };
 
   const handleResultClick = async (result: any) => {
-    onSearch(result.display_name)
-    setSearchResults([])
-    setSearchQuery('')  // Clear the search input after selection
-    
+    onSearch(result.display_name);
+    setSearchResults([]);
+    setSearchQuery(""); // Clear the search input after selection
+
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/details?format=json&place_id=${result.place_id}&addressdetails=1`,
         {
           headers: {
-            'User-Agent': 'World-Map-Explorer/1.0'
-          }
+            "User-Agent": "World-Map-Explorer/1.0",
+          },
         }
-      )
-      const data = await response.json()
-      
+      );
+      const data = await response.json();
+
       // Format the details
       const formattedDetails = {
-        displayName: result.display_name.split(',')[0],
+        displayName: result.display_name.split(",")[0],
         type: result.type,
         country: data.address?.country,
         state: data.address?.state,
         coordinates: `${result.lat}, ${result.lon}`,
         population: data.extratags?.population,
-        languages: data.extratags?.languages?.split(','),
-        borders: data.extratags?.borders?.split(',')
-      }
-      
-      setDetails(formattedDetails)
-      setShowDetails(true)
+        languages: data.extratags?.languages?.split(","),
+        borders: data.extratags?.borders?.split(","),
+      };
+
+      setDetails(formattedDetails);
+      setShowDetails(true);
     } catch (error) {
-      console.error('Error fetching details:', error)
+      console.error("Error fetching details:", error);
     }
-  }
+  };
 
   return (
-    <div id="left-container" className="fixed z-[1078] top-[50px]">
-      <div className="box-input" id="search-container" aria-label="search places">
-        <div id="c-search-input" className="relative w-[300px] h-[30px] border-2 border-black rounded-lg bg-white">
+    <div className="flex items-center gap-2">
+      <div
+        className="box-input"
+        id="search-container"
+        aria-label="search places"
+      >
+        <div
+          id="c-search-input"
+          className="relative w-[300px] h-[30px] border-2 border-black rounded-lg bg-white"
+        >
           <form onSubmit={handleSearch}>
             <input
               type="text"
@@ -103,7 +119,10 @@ const Search = ({ onSearch }: SearchProps) => {
         </div>
 
         {searchResults.length > 0 && (
-          <ul id="search-results" className="list-none flex flex-col border-2 border-black w-[300px] p-0 mt-0.5 z-[1005] max-h-[200px] overflow-y-auto bg-white rounded-lg text-base">
+          <ul
+            id="search-results"
+            className="list-none flex flex-col border-2 border-black w-[300px] p-0 mt-0.5 z-[1005] max-h-[200px] overflow-y-auto bg-white rounded-lg text-base"
+          >
             {searchResults.map((result) => (
               <li
                 key={result.place_id}
@@ -131,10 +150,10 @@ const Search = ({ onSearch }: SearchProps) => {
             >
               <FontAwesomeIcon icon={faTimes} />
             </button>
-            
+
             <div className="space-y-3">
               <h2 className="font-semibold text-base">{details.displayName}</h2>
-              
+
               <div className="space-y-1">
                 <h3 className="font-medium text-sm">Main Details</h3>
                 {details.type && (
@@ -157,18 +176,41 @@ const Search = ({ onSearch }: SearchProps) => {
                   <p className="text-sm">Population: {details.population}</p>
                 )}
                 {details.languages && details.languages.length > 0 && (
-                  <p className="text-sm">Languages: {details.languages.join(', ')}</p>
+                  <p className="text-sm">
+                    Languages: {details.languages.join(", ")}
+                  </p>
                 )}
                 {details.borders && details.borders.length > 0 && (
-                  <p className="text-sm">Borders: {details.borders.join(', ')}</p>
+                  <p className="text-sm">
+                    Borders: {details.borders.join(", ")}
+                  </p>
                 )}
               </div>
             </div>
           </div>
         )}
       </div>
-    </div>
-  )
-}
 
-export default Search 
+      <button
+        className="bg-white p-2 rounded-lg border-2 border-black"
+        onClick={() => setShowDistanceFinder(true)}
+        aria-label="Find distance between places"
+        title="Find distance between places"
+      >
+        <FontAwesomeIcon icon={faDirections} />
+      </button>
+
+      <div>
+        {" "}
+        {showDistanceFinder && (
+          <DistanceFinder
+            map={map}
+            onClose={() => setShowDistanceFinder(false)}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Search;

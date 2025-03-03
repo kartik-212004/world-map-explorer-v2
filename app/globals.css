@@ -90,6 +90,7 @@ body {
 
 .box.active {
   display: block;
+  background-color: #f0eaea;
 }
 
 .box h1 {

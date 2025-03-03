@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import { useState, useEffect, useRef } from "react";
 import Search from "../Search";
 import L from "leaflet";
+import type { FeatureCollection } from 'geojson';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -383,7 +384,7 @@ const MapControls = ({
   );
 };
 
-interface GeoJSONFeature extends GeoJSON.Feature {
+interface GeoJSONFeature extends FeatureCollection {
   properties: {
     NAME_1?: string;
     name?: string;
@@ -397,7 +398,7 @@ interface GeoJSONFeature extends GeoJSON.Feature {
     capital?: string;
     CAPITAL?: string;
   };
-  geometry: GeoJSON.Geometry;
+  geometry: FeatureCollection;
 }
 
 interface GeoJSONLayer extends L.Path {
@@ -417,10 +418,10 @@ const MapContent = ({ mapType }: { mapType: "default" | "geopolitical" }) => {
   const [showSatellite, setShowSatellite] = useState(false);
   const [terrainOpacity, setTerrainOpacity] = useState(1);
   const [satelliteOpacity, setSatelliteOpacity] = useState(1);
-  const [statesData, setStatesData] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [statesData, setStatesData] = useState<FeatureCollection | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<GeoJSONLayer | null>(null);
-  const [indiaBoundary, setIndiaBoundary] = useState<GeoJSON.FeatureCollection | null>(null);
-  const [kashmir, setKashmir] = useState<GeoJSON.FeatureCollection | null>(null);
+  const [indiaBoundary, setIndiaBoundary] = useState<FeatureCollection | null>(null);
+  const [kashmir, setKashmir] = useState<FeatureCollection | null>(null);
   const clickMarker = useRef<L.Marker | null>(null);
 
   useEffect(() => {
@@ -715,6 +716,8 @@ const Map = ({ mapType }: MapProps) => {
   const [mapRef, setMapRef] = useState<L.Map | null>(null);
   const { updateMapStatus } = useMapContext();
   const [showDistanceFinder, setShowDistanceFinder] = useState(false);
+  const [indiaBoundary, setIndiaBoundary] = useState<FeatureCollection | null>(null);
+  const [kashmir, setKashmir] = useState<FeatureCollection | null>(null);
 
   useEffect(() => {
     if (mapType === "geopolitical") {
@@ -828,26 +831,9 @@ const Map = ({ mapType }: MapProps) => {
 
   return (
     <div className="relative h-screen w-full">
-      <div className="absolute top-4 left-4 z-[1000] flex items-center gap-2">
-        <div className="flex items-center">
-          <Search onSearch={handleSearch} />
-          <button
-            className="bg-white p-2 rounded-lg border-2 border-black ml-2"
-            onClick={() => setShowDistanceFinder(true)}
-            aria-label="Find distance between places"
-            title="Find distance between places"
-          >
-            <FontAwesomeIcon icon={faDirections} />
-          </button>
-        </div>
+      <div className="absolute top-12 left-4 z-[1000]">
+        <Search onSearch={handleSearch} map={mapRef} />
       </div>
-
-      {showDistanceFinder && (
-        <DistanceFinder 
-          map={mapRef} 
-          onClose={() => setShowDistanceFinder(false)} 
-        />
-      )}
 
       <MapContainer
         center={[center.lat, center.lng]}

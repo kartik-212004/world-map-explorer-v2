@@ -176,10 +176,11 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
 
   return (
     <div
-      className="box active"
+      className="box active bg-[#f0eaea] shadow-md"
       id="box"
       tabIndex={0}
       aria-label="distance finder opened"
+      style={{ backgroundColor: "#f0eaea" }}
     >
       <button
         className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
@@ -191,7 +192,9 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
         <FontAwesomeIcon icon={faTimes} size="lg" />
       </button>
 
-      <h1 className="text-xl font-bold mb-4">Find Distance</h1>
+      <h1 style={{ fontSize: "30px" }} className="font-bold mb-4">
+        Find Distance
+      </h1>
 
       <div className="box-input">
         <span>
@@ -204,6 +207,7 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
             id="beginning"
             value={startPoint}
             onChange={(e) => setStartPoint(e.target.value)}
+            className=""
             placeholder="Enter Starting point"
             aria-label="type place and press enter"
           />
@@ -278,14 +282,15 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       </button>
 
       <button
-        className="fas fa-arrow-circle-right"
+        className="fas  fa-arrow-circle-right"
         tabIndex={0}
+        style={{ backgroundColor: "white", padding: "10px" }}
         id="find"
         title="Find Distance"
         aria-label="click to Find distance"
         onClick={calculateDistance}
       >
-        <FontAwesomeIcon icon={faArrowCircleRight} />
+        <FontAwesomeIcon className="text-black" icon={faArrowCircleRight} />
       </button>
 
       {showDistanceResult && (
