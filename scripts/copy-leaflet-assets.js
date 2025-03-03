@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs';
+import path from 'path';
 
 const leafletPath = path.join(__dirname, '../node_modules/leaflet/dist/images')
 const publicPath = path.join(__dirname, '../public')
