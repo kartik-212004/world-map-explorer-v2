@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimes,
@@ -25,10 +25,59 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
   const [distance, setDistance] = useState<string>("");
   const [time, setTime] = useState<string>("");
   const [showDistanceResult, setShowDistanceResult] = useState(false);
+  const [isMapClickEnabled, setIsMapClickEnabled] = useState(false);
   const routeLayer = useRef<L.Polyline | null>(null);
   const { updateMapStatus } = useMapContext();
   const startMarker = useRef<L.Marker | null>(null);
   const endMarker = useRef<L.Marker | null>(null);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const handleMapClick = (e: L.LeafletMouseEvent) => {
+      if (!isMapClickEnabled || !startMarker.current) return;
+
+      const { lat, lng } = e.latlng;
+      
+      if (endMarker.current) {
+        endMarker.current.remove();
+      }
+
+      endMarker.current = L.marker([lat, lng], {
+        icon: L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
+        }),
+      }).addTo(map);
+
+      setEndPoint(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+      setIsMapClickEnabled(false);
+      updateMapStatus("Destination point selected");
+    };
+
+    if (isMapClickEnabled) {
+      map.on('click', handleMapClick);
+      updateMapStatus("Click on map to select destination point");
+    }
+
+    return () => {
+      map.off('click', handleMapClick);
+    };
+  }, [map, isMapClickEnabled, updateMapStatus]);
+
+  const enableMapClick = () => {
+    if (!startMarker.current) {
+      updateMapStatus("Please select a starting point first");
+      return;
+    }
+    setIsMapClickEnabled(true);
+    updateMapStatus("Click on map to select destination point");
+  };
 
   const searchLocation = async (query: string, isStart: boolean) => {
     try {
@@ -245,14 +294,16 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
             id="destination"
             value={endPoint}
             onChange={(e) => setEndPoint(e.target.value)}
-            placeholder="Enter Destination"
+            placeholder="Enter Destination or click on map"
             aria-label="type place and press enter"
+            disabled={isMapClickEnabled}
           />
           <button
             id="d-searchbutton"
             tabIndex={0}
             aria-label="click to see suggestions"
             onClick={() => handleSearch(endPoint, false)}
+            disabled={isMapClickEnabled}
           >
             <FontAwesomeIcon icon={faSearch} />
           </button>
@@ -272,13 +323,14 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
       </div>
 
       <button
-        className="fas fa-map-marked-alt"
+        className={`fas fa-map-marked-alt ${isMapClickEnabled ? 'text-blue-500' : ''}`}
         aria-hidden="true"
         title="Choose from map"
         id="fromMap"
         tabIndex={-1}
+        onClick={enableMapClick}
       >
-        <FontAwesomeIcon icon={faMapMarkedAlt} />
+        <FontAwesomeIcon icon={faMapMarkedAlt} className={isMapClickEnabled ? 'text-blue-500' : 'text-black'} />
       </button>
 
       <button
@@ -289,6 +341,7 @@ const DistanceFinder = ({ map, onClose }: DistanceFinderProps) => {
         title="Find Distance"
         aria-label="click to Find distance"
         onClick={calculateDistance}
+        disabled={!startMarker.current || !endMarker.current}
       >
         <FontAwesomeIcon className="text-black" icon={faArrowCircleRight} />
       </button>
