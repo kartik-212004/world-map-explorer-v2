@@ -4,12 +4,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
-import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import DistanceFinder from "../DistanceFinder";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 import LoginModal from "../LoginModal";
+import UserMenu from "../UserMenu";
 
 interface NavbarProps {
   onMapTypeChange: (type: "default" | "geopolitical") => void;
@@ -19,6 +18,11 @@ const Navbar = ({ onMapTypeChange }: NavbarProps) => {
   const session = useSession();
   const router = useRouter();
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Get user's name or email to display
+  const displayName = session.data?.user?.name || 
+                     session.data?.user?.email?.split('@')[0] || 
+                     'User';
 
   return (
     <>
@@ -40,14 +44,7 @@ const Navbar = ({ onMapTypeChange }: NavbarProps) => {
 
           <div className="header-icons flex items-center h-full space-x-4">
             {session.data?.user ? (
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="text-[#A04242] font-bold border-2 border-[#A04242] rounded-lg px-4 py-1 hover:bg-[#A04242] hover:text-white transition-colors"
-              >
-                <i className="fa fa-question-circle" aria-hidden="true">
-                  <LogOut />
-                </i>
-              </button>
+              <UserMenu userName={displayName} />
             ) : (
               <button
                 onClick={() => setShowLoginModal(true)}
