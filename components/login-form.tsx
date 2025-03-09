@@ -3,13 +3,49 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        isSignUp: isSignUp.toString(),
+        redirect: false,
+        callbackUrl: "/"
+      });
+
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(isSignUp ? "Account created successfully!" : "Logged in successfully!");
+        window.location.href = "/"; // Redirect to home page
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+      console.error("Auth error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -21,12 +57,14 @@ export function LoginForm({
               className="absolute inset-0 h-full w-full object-contain p-6"
             />
           </div>
-          <form className="p-6 md:p-8 bg-white">
+          <form onSubmit={handleSubmit} className="p-6 md:p-8 bg-white">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold text-[#6F0E0E]">Welcome back</h1>
+                <h1 className="text-2xl font-bold text-[#6F0E0E]">
+                  {isSignUp ? "Create Account" : "Welcome back"}
+                </h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your Zendalona account
+                  {isSignUp ? "Sign up for a Zendalona account" : "Login to your Zendalona account"}
                 </p>
               </div>
               <div className="grid gap-3">
@@ -36,22 +74,38 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  disabled={isLoading}
                 />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+                  {!isSignUp && (
+                    <a
+                      href="#"
+                      className="ml-auto text-sm underline-offset-2 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  )}
                 </div>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  disabled={isLoading}
+                />
               </div>
-              <Button type="submit" className="w-full bg-[#6F0E0E] hover:bg-[#8B1111]">
-                Login
+              <Button
+                type="submit"
+                className="w-full bg-[#6F0E0E] hover:bg-[#8B1111]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Please wait..." : (isSignUp ? "Sign Up" : "Login")}
               </Button>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-white text-muted-foreground relative z-10 px-2">
@@ -60,12 +114,11 @@ export function LoginForm({
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <Button
-                  onClick={() => {
-                    signIn("github", { callbackUrl: "/" });
-                  }}
+                  onClick={() => signIn("github", { callbackUrl: "/" })}
                   variant="outline"
                   type="button"
                   className="w-full"
+                  disabled={isLoading}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -76,12 +129,11 @@ export function LoginForm({
                   <span className="sr-only">Login with Github</span>
                 </Button>
                 <Button
-                  onClick={() => {
-                    signIn("google", { callbackUrl: "/" });
-                  }}
+                  onClick={() => signIn("google", { callbackUrl: "/" })}
                   variant="outline"
                   type="button"
                   className="w-full"
+                  disabled={isLoading}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -92,12 +144,11 @@ export function LoginForm({
                   <span className="sr-only">Login with Google</span>
                 </Button>
                 <Button
-                  onClick={() => {
-                    signIn("facebook", { callbackUrl: "/" });
-                  }}
+                  onClick={() => signIn("facebook", { callbackUrl: "/" })}
                   variant="outline"
                   type="button"
                   className="w-full"
+                  disabled={isLoading}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -109,18 +160,44 @@ export function LoginForm({
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4 text-[#6F0E0E] hover:text-[#8B1111]">
-                  Sign up
-                </a>
+                {isSignUp ? (
+                  <>
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsSignUp(false)}
+                      className="underline underline-offset-4 text-[#6F0E0E] hover:text-[#8B1111]"
+                    >
+                      Log in
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Don&apos;t have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsSignUp(true)}
+                      className="underline underline-offset-4 text-[#6F0E0E] hover:text-[#8B1111]"
+                    >
+                      Sign up
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </form>
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#" className="text-[#6F0E0E]">Terms of Service</a>{" "}
-        and <a href="#" className="text-[#6F0E0E]">Privacy Policy</a>.
+        By clicking continue, you agree to our{" "}
+        <a href="#" className="text-[#6F0E0E]">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="text-[#6F0E0E]">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );
